@@ -122,8 +122,41 @@ void removeLine() {
                 for (int j = 0; j < W - 1; j++) board[ii][j] = board[ii - 1][j];
             i++;
             draw();
-            _sleep(200);
+            Sleep(200);
         }
+    }
+}
+void removeLine_Pro()
+{
+    int score = 0;
+    int speedMs = 200;
+    const int MIN_SPEED = 60;
+    int linesRemoved = 0;
+
+    for (int i = H - 2; i > 0; i--) {
+        int j;
+        for (j = 1; j < W - 1; j++)
+            if (board[i][j] == ' ') break;
+
+        if (j == W - 1) {
+            for (int ii = i; ii > 0; ii--)
+                for (int jj = 1; jj < W - 1; jj++)
+                    board[ii][jj] = board[ii - 1][jj];
+
+            for (int jj = 1; jj < W - 1; jj++)
+                board[1][jj] = ' ';
+
+            linesRemoved++;
+            i++;
+        }
+    }
+
+    if (linesRemoved > 0) {
+        score += linesRemoved * 100;
+
+        int step = 10 * linesRemoved;
+        if (speedMs > MIN_SPEED)
+            speedMs = max(MIN_SPEED, speedMs - step);
     }
 }
 
@@ -135,8 +168,8 @@ int main()
     initBoard();
     while (1) {
         boardDelBlock();
-        if (kbhit()) {
-            char c = getch();
+        if (_kbhit()) {
+            char c = _getch();
             if (c == 'a' && canMove(-1, 0)) x--;
             if (c == 'd' && canMove(1, 0)) x++;
             if (c == 'x' && canMove(0, 1))  y++;
@@ -150,7 +183,7 @@ int main()
         }
         block2Board();
         draw();
-        _sleep(200);
+        Sleep(200);
     }
     return 0;
 }
