@@ -160,25 +160,7 @@ void removeLine_Pro()
     }
 }
 
-bool canPlaceBlockAt(int nx, int ny, const char block[4][4]) {
-    for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-            if (block[i][j] != ' ') {
-                int tx = nx + j;
-                int ty = ny + i;
-
-                if (tx < 1 || tx >= W - 1 || ty >= H - 1)
-                    return false;
-
-                if (ty >= 0 && board[ty][tx] != ' ')
-                    return false;
-            }
-        }
-    }
-    return true;
-}
-
-void rotateBlockCW() {
+void rotateBlock() {
     char temp[4][4];
     char rotated[4][4];
 
@@ -192,10 +174,31 @@ void rotateBlockCW() {
         }
     }
 
-    if (canPlaceBlockAt(x, y, rotated)) {
-        for (int i = 0; i < 4; ++i)
-            for (int j = 0; j < 4; ++j)
-                blocks[b][i][j] = rotated[i][j];
+    int tx, ty;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        for(int j = 0; j < 4; ++j)
+        {
+            if(rotated[i][j] != ' ')
+            {   
+                int tx = x + j;
+                int ty = y + i;
+
+                if (tx < 1 || tx >= W - 1 || ty >= H - 1)
+                    return;
+
+                if (board[ty][tx] != ' ')
+                    return;
+            }
+        }
+    }
+    for (int i = 0; i < 4; ++i)
+    {
+        for (int j = 0; j < 4; ++j)
+        {
+            blocks[b][i][j] = rotated[i][j];
+        }
     }
 }
 
@@ -213,6 +216,7 @@ int main()
             if (c == 'a' && canMove(-1, 0)) x--;
             if (c == 'd' && canMove(1, 0)) x++;
             if (c == 'x' && canMove(0, 1))  y++;
+            if (c == 'w') rotateBlock();
             if (c == 'q') break;
         }
         if (canMove(0, 1)) y++;
