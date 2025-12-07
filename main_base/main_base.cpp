@@ -160,6 +160,46 @@ void removeLine_Pro()
     }
 }
 
+bool canPlaceBlockAt(int nx, int ny, const char block[4][4]) {
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (block[i][j] != ' ') {
+                int tx = nx + j;
+                int ty = ny + i;
+
+                if (tx < 1 || tx >= W - 1 || ty >= H - 1)
+                    return false;
+
+                if (ty >= 0 && board[ty][tx] != ' ')
+                    return false;
+            }
+        }
+    }
+    return true;
+}
+
+void rotateBlockCW() {
+    char temp[4][4];
+    char rotated[4][4];
+
+    for (int i = 0; i < 4; ++i)
+        for (int j = 0; j < 4; ++j)
+            temp[i][j] = blocks[b][i][j];
+
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            rotated[i][j] = temp[3 - j][i];
+        }
+    }
+
+    if (canPlaceBlockAt(x, y, rotated)) {
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)
+                blocks[b][i][j] = rotated[i][j];
+    }
+}
+
+
 int main()
 {
     srand(time(0));
