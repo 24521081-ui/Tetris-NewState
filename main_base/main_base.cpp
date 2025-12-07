@@ -1,9 +1,11 @@
-#include <iostream>
+﻿#include <iostream>
 #include <conio.h>
 #include <windows.h>
 using namespace std;
 #define H 20
 #define W 15
+int speedMs = 200;
+const int MIN_SPEED = 50;
 char board[H][W] = {};
 char blocks[][4][4] = {
         {{' ','I',' ',' '},
@@ -83,26 +85,6 @@ bool canMove(int dx, int dy) {
 void removeLine() {
     int j;
     for (int i = H - 2; i > 0; i--) {
-        for (j = 0; j < W - 1; j++)
-            if (board[i][j] == ' ') break;
-        if (j == W - 1) {
-            for (int ii = i; ii > 0; ii--)
-                for (int j = 0; j < W - 1; j++) board[ii][j] = board[ii - 1][j];
-            i++;
-            draw();
-            Sleep(200);
-        }
-    }
-}
-void removeLine_Pro()
-{
-    int score = 0;
-    int speedMs = 200;
-    const int MIN_SPEED = 60;
-    int linesRemoved = 0;
-
-    for (int i = H - 2; i > 0; i--) {
-        int j;
         for (j = 1; j < W - 1; j++)
             if (board[i][j] == ' ') break;
 
@@ -114,19 +96,14 @@ void removeLine_Pro()
             for (int jj = 1; jj < W - 1; jj++)
                 board[1][jj] = ' ';
 
-            linesRemoved++;
+            speedMs -= 10;
+            if (speedMs < MIN_SPEED) speedMs = MIN_SPEED;
+
             i++;
         }
     }
-
-    if (linesRemoved > 0) {
-        score += linesRemoved * 100;
-
-        int step = 10 * linesRemoved;
-        if (speedMs > MIN_SPEED)
-            speedMs = max(MIN_SPEED, speedMs - step);
-    }
 }
+
 
 void rotateBlock() {
     char temp[4][4];
@@ -226,7 +203,7 @@ int main()
         }
         block2Board();
         draw();
-        Sleep(200);
+        Sleep(speedMs);
     }
     return 0;
 }
