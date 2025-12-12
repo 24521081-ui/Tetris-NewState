@@ -86,7 +86,13 @@ void initBoard() {
 
 void draw() {
     gotoxy(0, 0);
-    cout << "Score: " << score << "\n"; // <-- hiện điểm
+    cout << "Controls:\n";
+    cout << "A: Move Left\n";
+    cout << "D: Move Right\n";
+    cout << "W: Rotate\n";
+    cout << "X: Move Down\n";
+    cout << "Q: Quit\n";
+    cout << "\nScore: " << score << "\n\n";
 
     for (int i = 0; i < H; i++, cout << endl)
         for (int j = 0; j < W; j++)
