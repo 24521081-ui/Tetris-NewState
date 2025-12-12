@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
 #include <conio.h>
 #include <windows.h>
 using namespace std;
@@ -8,6 +9,7 @@ using namespace std;
 
 int speedMs = 200;
 const int MIN_SPEED = 50;
+int highScore = 0;
 
 char board[H][W] = {};
 
@@ -56,6 +58,22 @@ char blocks[][4][4] = {
 int x = 4, y = 0, b = 1;
 int score = 0;   // <-- Thêm tính điểm
 
+void loadHighScore() {
+    FILE* f = fopen("highscore.txt", "r");
+    if (f) {
+        fscanf(f, "%d", &highScore);
+        fclose(f);
+    }
+}
+
+void saveHighScore() {
+    FILE* f = fopen("highscore.txt", "w");
+    if (f) {
+        fprintf(f, "%d", highScore);
+        fclose(f);
+    }
+}
+
 void gotoxy(int x, int y) {
     COORD c = { x, y };
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
@@ -92,7 +110,7 @@ void draw() {
     cout << "W: Rotate\n";
     cout << "X: Move Down\n";
     cout << "Q: Quit\n";
-    cout << "\nScore: " << score << "\n\n";
+    cout << "Score: " << score << "    High Score: " << highScore << "\n\n";
 
     for (int i = 0; i < H; i++, cout << endl)
         for (int j = 0; j < W; j++)
@@ -135,6 +153,8 @@ void removeLine() {
     }
 
     score += linesCleared * 100;  // <-- Cộng điểm
+    if (score > highScore)
+        highScore = score;
 }
 
 void rotateBlock() {
@@ -169,6 +189,7 @@ void rotateBlock() {
 
 int main() {
     srand(time(0));
+    loadHighScore();
     b = rand() % 8;
     system("cls");
     initBoard();
@@ -204,6 +225,8 @@ int main() {
                         system("cls");
                         cout << "GAME OVER!\nYour score: " << score << endl;
                         Sleep(4000);
+                        saveHighScore();
+                        cout << "High Score: " << highScore << endl;
                         return 0;
                     }
         }
