@@ -187,6 +187,32 @@ void rotateBlock() {
             blocks[b][i][j] = rotated[i][j];
 }
 
+int getGhostY() {
+    int originalY = y; 
+    while (canMove(0, 1))
+        y++;
+    int ghostY = y;
+    y = originalY; 
+    return ghostY;
+}
+
+void clearGhost() {
+    for (int i = 0; i < H; i++)
+        for (int j = 0; j < W; j++)
+            if (board[i][j] == '.')
+                board[i][j] = ' ';
+}
+
+void drawGhost() {
+    int ghostY = getGhostY();
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
+            if (blocks[b][i][j] != ' ')
+                if (ghostY + i < H && board[ghostY + i][x + j] == ' ')
+                    board[ghostY + i][x + j] = '.';
+}
+
+
 int main() {
     srand(time(0));
     loadHighScore();
@@ -195,6 +221,7 @@ int main() {
     initBoard();
 
     while (1) {
+        clearGhost();
         boardDelBlock();
 
         if (_kbhit()) {
@@ -231,6 +258,7 @@ int main() {
                     }
         }
 
+        drawGhost();
         block2Board();
         draw();
         Sleep(speedMs);
