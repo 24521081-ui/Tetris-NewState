@@ -32,6 +32,8 @@
 *.a
 *.lib
 
+!Dependencies/**
+
 # Executables
 *.exe
 *.out
