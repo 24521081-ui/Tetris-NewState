@@ -1,4 +1,5 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -53,8 +54,11 @@ private:
     float timer;
     bool gameOver;
 
+    sf::SoundBuffer bufMove, bufRotate, bufDrop, bufLine, bufGameOver;
+    sf::Sound sMove, sRotate, sDrop, sLine, sGameOver;
+    sf::Music bgMusic;
 
-
+    bool isMuted = false;
 
     Color getSfmlColor(char c, int alpha = 255) {
         switch (c) {
@@ -167,6 +171,7 @@ private:
             }
         }
         if (linesCleared > 0) {
+            if (!isMuted) sLine.play();
             score += linesCleared * 100;
             if (score > highScore) highScore = score;
             if (score % 500 == 0 && speedMs > MIN_SPEED) speedMs -= 20;
@@ -302,6 +307,7 @@ private:
         drawKeyGuide(leftX, guideY + gap * 2, "D", "Move Right");
         drawKeyGuide(leftX, guideY + gap * 3, "S", "Soft Drop");
         drawKeyGuide(leftX, guideY + gap * 4, "Q", "Quit Game");
+        drawKeyGuide(leftX, guideY + gap * 5, "M", "Mute/Unmute");
 
 
         float rightGap = 35;
@@ -405,6 +411,29 @@ public:
         initBoard();
         generateNextData();
         spawnBlock();
+
+        bufMove.loadFromFile("assets/sound/move.wav");
+        bufRotate.loadFromFile("assets/sound/rotate.wav");
+        bufDrop.loadFromFile("assets/sound/drop.wav");
+        bufLine.loadFromFile("assets/sound/line.wav");
+        bufGameOver.loadFromFile("assets/sound/gameover.wav");
+
+        sMove.setBuffer(bufMove);
+        sRotate.setBuffer(bufRotate);
+        sDrop.setBuffer(bufDrop);
+        sLine.setBuffer(bufLine);
+        sGameOver.setBuffer(bufGameOver);
+
+        sMove.setVolume(50);
+        sRotate.setVolume(60);
+        sDrop.setVolume(70);
+        sLine.setVolume(80);
+        sGameOver.setVolume(90);
+
+        bgMusic.openFromFile("assets/sound/bgm.ogg");
+        bgMusic.setLoop(true);
+        bgMusic.setVolume(40);
+        bgMusic.play();
     }
 
 
@@ -426,15 +455,24 @@ public:
                     if (!gameOver) {
                         if (e.key.code == Keyboard::Up || e.key.code == Keyboard::W) {
                             rotateBlock();
+                            if (!isMuted) sRotate.play();
                         }
                         else if (e.key.code == Keyboard::Left || e.key.code == Keyboard::A) {
                             if (canMove(-1, 0)) x--;
+                            if (!isMuted) sMove.play();
                         }
                         else if (e.key.code == Keyboard::Right || e.key.code == Keyboard::D) {
                             if (canMove(1, 0)) x++;
+                            if (!isMuted) sMove.play();
                         }
                         else if (e.key.code == Keyboard::Down || e.key.code == Keyboard::S) {
                             if (canMove(0, 1)) y++;
+                            if (!isMuted) sDrop.play();
+                        }
+                        if (e.key.code == Keyboard::M) {
+                            isMuted = !isMuted;
+                            if (isMuted) bgMusic.pause();
+                            else bgMusic.play();
                         }
                     }
                 }
@@ -451,6 +489,8 @@ public:
                         if (checkGameOver()) {
                             gameOver = true;
                             saveHighScore();
+                            bgMusic.stop();
+                            if (!isMuted) sGameOver.play();
                         }
                     }
                     timer = 0;
