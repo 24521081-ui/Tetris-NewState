@@ -1,4 +1,4 @@
-﻿﻿#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <fstream>
@@ -89,7 +89,7 @@ private:
             for (int p = 0; p < 10; p++) {
                 Particle newP;
                 newP.pos = Vector2f(OFFSET_X + j * CELL_SIZE + CELL_SIZE / 2, gridY * CELL_SIZE + CELL_SIZE / 2);
-
+                
                 newP.vel = Vector2f((rand() % 200 - 100) / 20.0f, (rand() % 200 - 100) / 20.0f);
                 newP.lifetime = 255.0f;
                 newP.color = cellColor;
@@ -181,7 +181,7 @@ private:
                 if (board[i][j] == ' ') { full = false; break; }
 
             if (full) {
-                createParticles(i);
+                createParticles(i); 
                 linesCleared++;
                 for (int ii = i; ii > 0; ii--)
                     for (int jj = 1; jj < W - 1; jj++)
